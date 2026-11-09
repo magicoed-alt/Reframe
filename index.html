@@ -59,6 +59,9 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:poin
 #natUI .r1{justify-content:center}
 #natPill{width:calc(211*var(--u));height:calc(110*var(--u));border-radius:999px;background:#1c1c1e;color:#ffd60a;font:600 calc(46*var(--u))/1 -apple-system,'SF Pro Text',Inter,sans-serif;letter-spacing:.04em;display:flex;align-items:center;justify-content:center;border:0;box-shadow:inset 0 0 0 calc(2*var(--u)) rgba(255,255,255,.1)}
 #cam.nat .nocam{background:#000}
+#blk{position:fixed;inset:0;background:#000;z-index:15;display:none;touch-action:none}
+#blk.show{display:block}
+#blkInd{position:absolute;right:calc(70*var(--u));top:calc(190*var(--u));font:500 calc(46*var(--u))/1 -apple-system,'SF Pro Text',Inter,sans-serif;color:#5c5c61;letter-spacing:.02em;pointer-events:none}
 #shotImg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;pointer-events:none}
 #cam.nat .nocam>*,#cam.nat .grid,#cam.nat .expand,#cam.nat .focus{display:none!important}
 .bottom{position:absolute;left:0;top:calc(1995*var(--u));bottom:0;width:100%;display:flex;flex-direction:column;justify-content:space-evenly}
@@ -177,6 +180,8 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:poin
   <div id="flashw"></div>
 </div>
 
+<div id="blk"><div id="blkInd"></div></div>
+
 <div id="ph">
   <div id="phbg"></div>
   <div id="stage"><canvas id="cvA"></canvas><canvas id="cvB"></canvas></div>
@@ -189,7 +194,7 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:poin
     <div class="g p chip" style="left:calc(1051*var(--u));top:calc(353*var(--u));width:calc(92*var(--u))"><svg viewBox="0 0 24 24" style="fill:var(--ink)"><path d="M12 3 4 7.500v9L12 21l8-4.500v-9z"/></svg><svg viewBox="0 0 24 24" style="width:calc(32*var(--u));height:calc(32*var(--u))"><path d="m9 6 6 6-6 6"/></svg></div>
     <div id="phStripL" style="left:calc(80*var(--u));bottom:calc(214*var(--u));width:calc(440*var(--u));height:calc(82*var(--u));position:absolute;display:flex;gap:calc(9*var(--u));overflow:hidden;border-radius:calc(6*var(--u))"></div>
     <div id="phStrip" style="left:calc(553*var(--u));bottom:calc(214*var(--u));width:calc(82*var(--u));height:calc(82*var(--u))"><canvas id="phStripCv" width="164" height="164"></canvas></div>
-    <div class="g c" style="left:calc(76*var(--u));bottom:calc(28*var(--u));width:calc(134*var(--u));height:calc(134*var(--u))"><svg viewBox="0 0 24 24"><path d="M12 15V3.500M8.500 7 12 3.500 15.500 7M7 10.500H5.500a1.500 1.500 0 0 0-1.500 1.500v7a1.500 1.500 0 0 0 1.500 1.500h13a1.500 1.500 0 0 0 1.500-1.500v-7a1.500 1.500 0 0 0-1.500-1.500H17"/></svg></div>
+    <div class="g c" id="phShare" style="left:calc(76*var(--u));bottom:calc(28*var(--u));width:calc(134*var(--u));height:calc(134*var(--u))"><svg viewBox="0 0 24 24"><path d="M12 15V3.500M8.500 7 12 3.500 15.500 7M7 10.500H5.500a1.500 1.500 0 0 0-1.500 1.500v7a1.500 1.500 0 0 0 1.500 1.500h13a1.500 1.500 0 0 0 1.500-1.500v-7a1.500 1.500 0 0 0-1.500-1.500H17"/></svg></div>
     <div class="g p" style="left:calc(369*var(--u));bottom:calc(28*var(--u));width:calc(450*var(--u));height:calc(134*var(--u));justify-content:space-around"><svg viewBox="0 0 24 24"><path d="M12 20.500s-8-4.800-8-10.700A4.600 4.600 0 0 1 12 7a4.600 4.600 0 0 1 8 2.800c0 5.900-8 10.700-8 10.700z"/></svg><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.600v.1"/></svg><svg viewBox="0 0 24 24"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg></div>
     <div class="g c" style="left:calc(977*var(--u));bottom:calc(28*var(--u));width:calc(134*var(--u));height:calc(134*var(--u))"><svg viewBox="0 0 24 24"><path d="M4.500 6.500h15M9.500 6.500V4h5v2.500M6.500 6.500l.8 13a1.500 1.500 0 0 0 1.500 1.400h6.400a1.500 1.500 0 0 0 1.500-1.400l.8-13M10 10.500v6M14 10.500v6"/></svg></div>
   </div>
@@ -583,12 +588,13 @@ async function importFile(f){
   let bm; try{ bm=await createImageBitmap(f,{imageOrientation:'from-image'}); }catch(e){ try{ bm=await createImageBitmap(f); }catch(e2){ return; } }
   const sc=Math.min(1,2560/Math.max(bm.width,bm.height)), W=Math.round(bm.width*sc),H=Math.round(bm.height*sc);
   const cv=document.createElement('canvas'); cv.width=W; cv.height=H; cv.getContext('2d').drawImage(bm,0,0,W,H);
-  newPhoto(cv,null,true);
+  newPhoto(cv,null,true); S.photo.file=f; showBlk();
 }
 ['nativeIn','pickIn'].forEach(id=>$(id).addEventListener('change',e=>{ const f=e.target.files[0]; e.target.value=''; importFile(f); }));
 function newPhoto(cv,live,imported){
   const W=cv.width,H=cv.height;
   const P={cv,W,H,time:new Date(),card:null,B:null,det:null,done:false,timerStarted:false};
+  updInd(S.pend||null);
   if(S.pend){ P.card=S.pend; S.pend=null; cardImage(P.card); }
   S.photo=P; S.seq=[]; setDot(false); hits=0; drawDbg(null,LW,LH);
   // animação do obturador
@@ -641,25 +647,37 @@ function onSwipe(dir){
   if(S.seq.length<3){ pulseDot(1,70); return; }
   const code=decode(S.seq); S.lastSeq=S.seq.join(' ')+' → '+(code||'inválido'); S.seq=[];
   if(!code){ return; }
+  updInd(code);
   if(!S.photo){ S.pend=code; pulseDot(2,90); return; }
   const P=S.photo; P.card=code; P.B=null; P.done=false; P.timerStarted=false; clearTimeout(P.timer);
   pulseDot(2,90);
   cardImage(code).then(()=>{ if(P.det) buildMasked(P); });
 }
-(function(){ // detecção do swipe no visor (toque no iPhone; mouse nos testes)
+(function(){ // detecção do swipe (visor e tela preta); toque no iPhone, mouse nos testes
   const TH=30; let t=null;
   function reg(dx,dy){ const ax=Math.abs(dx),ay=Math.abs(dy); onSwipe(ax>ay?(dx>0?'R':'L'):(dy>0?'D':'U')); }
-  function tap(x,y){ const r=vf.getBoundingClientRect(),f=$('focus'); f.style.left=(x-r.left)+'px'; f.style.top=(y-r.top)+'px'; f.style.opacity='1'; }
-  function finish(){ if(!t) return; const dx=t.lx-t.x, dy=t.ly-t.y; if(Math.max(Math.abs(dx),Math.abs(dy))>=TH) reg(dx,dy); else tap(t.x,t.y); t=null; }
-  vf.addEventListener('touchstart',e=>{ if(e.touches.length!==1){t=null;return;} const q=e.touches[0]; t={x:q.clientX,y:q.clientY,lx:q.clientX,ly:q.clientY}; e.preventDefault(); },{passive:false});
-  vf.addEventListener('touchmove',e=>{ if(!t) return; e.preventDefault(); const q=e.touches[0]; t.lx=q.clientX; t.ly=q.clientY; },{passive:false});
-  vf.addEventListener('touchend',e=>{ if(!t) return; e.preventDefault(); const q=e.changedTouches[0]; if(q){t.lx=q.clientX;t.ly=q.clientY;} finish(); },{passive:false});
-  vf.addEventListener('touchcancel',finish);
-  // mouse (computador)
-  vf.addEventListener('pointerdown',e=>{ if(e.pointerType!=='mouse') return; t={x:e.clientX,y:e.clientY,lx:e.clientX,ly:e.clientY,m:1}; });
+  function tap(x,y,el){ if(el===$('blk')){ openFromBlk(); return; } const r=vf.getBoundingClientRect(),f=$('focus'); f.style.left=(x-r.left)+'px'; f.style.top=(y-r.top)+'px'; f.style.opacity='1'; }
+  function finish(){ if(!t) return; const dx=t.lx-t.x, dy=t.ly-t.y, el=t.el; if(Math.max(Math.abs(dx),Math.abs(dy))>=TH) reg(dx,dy); else tap(t.x,t.y,el); t=null; }
+  [vf,$('blk')].forEach(el=>{
+    el.addEventListener('touchstart',e=>{ if(e.touches.length!==1){t=null;return;} const q=e.touches[0]; t={el,x:q.clientX,y:q.clientY,lx:q.clientX,ly:q.clientY}; e.preventDefault(); },{passive:false});
+    el.addEventListener('touchmove',e=>{ if(!t) return; e.preventDefault(); const q=e.touches[0]; t.lx=q.clientX; t.ly=q.clientY; },{passive:false});
+    el.addEventListener('touchend',e=>{ if(!t) return; e.preventDefault(); const q=e.changedTouches[0]; if(q){t.lx=q.clientX;t.ly=q.clientY;} finish(); },{passive:false});
+    el.addEventListener('touchcancel',finish);
+    el.addEventListener('pointerdown',e=>{ if(e.pointerType!=='mouse') return; t={el,x:e.clientX,y:e.clientY,lx:e.clientX,ly:e.clientY,m:1}; });
+  });
   addEventListener('pointermove',e=>{ if(t&&t.m){t.lx=e.clientX;t.ly=e.clientY;} });
   addEventListener('pointerup',e=>{ if(t&&t.m&&e.pointerType==='mouse'){t.lx=e.clientX;t.ly=e.clientY;finish();} });
 })();
+$('phShare').addEventListener('click',async()=>{
+  const P=S.photo; if(!P) return;
+  let f=P.file; if(!f){ const b=await new Promise(r=>P.cv.toBlob(r,'image/jpeg',.92)); f=new File([b],'foto.jpg',{type:'image/jpeg'}); }
+  try{ if(navigator.canShare&&navigator.canShare({files:[f]})){ await navigator.share({files:[f]}); return; } }catch(e){ if(e&&e.name==='AbortError') return; }
+  const a=document.createElement('a'); a.href=URL.createObjectURL(f); a.download=f.name||'foto.jpg'; document.body.appendChild(a); a.click(); a.remove();
+});
+function cardShort(c){ if(!c) return ''; if(c==='jj') return 'JK'; const v=c[0]==='x'?'10':c[0].toUpperCase(); return v+({s:'♠',h:'♥',d:'♦',c:'♣'})[c[1]]; }
+function updInd(c){ $('blkInd').textContent=cardShort(c); }
+function showBlk(){ $('blk').classList.add('show'); }
+function openFromBlk(){ $('blk').classList.remove('show'); openViewer(); }
 
 /* ---------- visualizador ---------- */
 const stage=$('stage'), cvA=$('cvA'), cvB=$('cvB'), ph=$('ph');
@@ -762,7 +780,7 @@ addEventListener('resize',()=>{ if(S.viewOpen&&S.photo){ layout(S.photo); clampV
   document.querySelectorAll('#cfgCam button').forEach(b=>b.addEventListener('click',()=>{ cfg.cam=b.dataset.v; saveCfg(); refresh(); S.liveDet=null; startCam(); }));
   document.querySelectorAll('#cfgDbg button').forEach(b=>b.addEventListener('click',()=>{ cfg.dbg=+b.dataset.v; refresh(); drawDbg(null,LW,LH); }));
   $('cfgClose').addEventListener('click',()=>sh.classList.remove('show'));
-  $('cfgReset').addEventListener('click',()=>{ if(S.photo) clearTimeout(S.photo.timer); $('shotImg').style.display='none'; S.photo=null; S.pend=null; S.seq=[]; hits=0; $('thumbImg').style.display='none'; sh.classList.remove('show'); });
+  $('cfgReset').addEventListener('click',()=>{ if(S.photo) clearTimeout(S.photo.timer); $('shotImg').style.display='none'; updInd(null); $('blk').classList.remove('show'); S.photo=null; S.pend=null; S.seq=[]; hits=0; $('thumbImg').style.display='none'; sh.classList.remove('show'); });
   sh.addEventListener('pointerdown',e=>{ if(e.target===sh) sh.classList.remove('show'); });
 })();
 
