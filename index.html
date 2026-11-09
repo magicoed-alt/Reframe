@@ -453,7 +453,7 @@ function saveCfg(){try{localStorage.setItem('fotoCfg',JSON.stringify({delay:cfg.
 if(qs.get('delay')) cfg.delay=+qs.get('delay')||cfg.delay;
 
 /* ---------- estado ---------- */
-const S={facing:'user',stream:null,demoOn:false,photo:null,liveDet:null,seq:[],seqT:0,viewOpen:false,cards:{}};
+const S={lastSeq:'',err:'',facing:'user',stream:null,demoOn:false,photo:null,liveDet:null,seq:[],seqT:0,viewOpen:false,cards:{}};
 const vid=$('vid'), demoImg=$('demoImg'), vf=$('vf'), dot=$('dot');
 
 /* ---------- pontinho amarelo ---------- */
@@ -562,7 +562,7 @@ async function buildMasked(P){
     if(!composeCard(id,P.det,card)) return;
     const B=document.createElement('canvas'); B.width=P.W; B.height=P.H; B.getContext('2d').putImageData(id,0,0);
     P.B=B; if(S.viewOpen&&S.photo===P&&!P.done) showB(P);
-  }catch(e){}
+  }catch(e){ S.err='não carregou a carta '+P.card; }
 }
 
 /* ---------- input secreto: 3 swipes na tela da câmera ---------- */
@@ -576,25 +576,27 @@ function cardLabel(c){ if(!c) return '—'; if(c==='jj') return 'Coringa'; retur
 function onSwipe(dir){
   if(!S.photo) return;
   const now=performance.now(); if(now-S.seqT>7000) S.seq=[]; S.seqT=now;
-  S.seq.push(dir);
+  S.seq.push(dir); S.lastSeq=S.seq.join(' ');
   if(S.seq.length<3){ pulseDot(1,70); return; }
-  const code=decode(S.seq); S.seq=[];
+  const code=decode(S.seq); S.lastSeq=S.seq.join(' ')+' → '+(code||'inválido'); S.seq=[];
   if(!code){ return; }
   const P=S.photo; P.card=code; P.B=null; P.done=false; P.timerStarted=false; clearTimeout(P.timer);
   pulseDot(2,90);
   cardImage(code).then(()=>{ if(P.det) buildMasked(P); });
 }
-(function(){ // detecção do swipe no visor
-  let p=null;
-  vf.addEventListener('pointerdown',e=>{ p={x:e.clientX,y:e.clientY,t:performance.now(),id:e.pointerId}; });
-  const end=e=>{
-    if(!p||e.pointerId!==p.id) return; const dx=e.clientX-p.x, dy=e.clientY-p.y, dt=performance.now()-p.t; p=null;
-    const ax=Math.abs(dx), ay=Math.abs(dy), m=Math.max(ax,ay);
-    if(m<40||dt>1200){ // toque simples: foco
-      const r=vf.getBoundingClientRect(), f=$('focus'); f.style.left=(e.clientX-r.left)+'px'; f.style.top=(e.clientY-r.top)+'px'; f.style.opacity='1'; return; }
-    onSwipe(ax>ay?(dx>0?'R':'L'):(dy>0?'D':'U'));
-  };
-  vf.addEventListener('pointerup',end); vf.addEventListener('pointercancel',()=>{p=null;});
+(function(){ // detecção do swipe no visor (toque no iPhone; mouse nos testes)
+  const TH=30; let t=null;
+  function reg(dx,dy){ const ax=Math.abs(dx),ay=Math.abs(dy); onSwipe(ax>ay?(dx>0?'R':'L'):(dy>0?'D':'U')); }
+  function tap(x,y){ const r=vf.getBoundingClientRect(),f=$('focus'); f.style.left=(x-r.left)+'px'; f.style.top=(y-r.top)+'px'; f.style.opacity='1'; }
+  function finish(){ if(!t) return; const dx=t.lx-t.x, dy=t.ly-t.y; if(Math.max(Math.abs(dx),Math.abs(dy))>=TH) reg(dx,dy); else tap(t.x,t.y); t=null; }
+  vf.addEventListener('touchstart',e=>{ if(e.touches.length!==1){t=null;return;} const q=e.touches[0]; t={x:q.clientX,y:q.clientY,lx:q.clientX,ly:q.clientY}; e.preventDefault(); },{passive:false});
+  vf.addEventListener('touchmove',e=>{ if(!t) return; e.preventDefault(); const q=e.touches[0]; t.lx=q.clientX; t.ly=q.clientY; },{passive:false});
+  vf.addEventListener('touchend',e=>{ if(!t) return; e.preventDefault(); const q=e.changedTouches[0]; if(q){t.lx=q.clientX;t.ly=q.clientY;} finish(); },{passive:false});
+  vf.addEventListener('touchcancel',finish);
+  // mouse (computador)
+  vf.addEventListener('pointerdown',e=>{ if(e.pointerType!=='mouse') return; t={x:e.clientX,y:e.clientY,lx:e.clientX,ly:e.clientY,m:1}; });
+  addEventListener('pointermove',e=>{ if(t&&t.m){t.lx=e.clientX;t.ly=e.clientY;} });
+  addEventListener('pointerup',e=>{ if(t&&t.m&&e.pointerType==='mouse'){t.lx=e.clientX;t.ly=e.clientY;finish();} });
 })();
 
 /* ---------- visualizador ---------- */
@@ -681,7 +683,7 @@ addEventListener('resize',()=>{ if(S.viewOpen&&S.photo){ layout(S.photo); clampV
     document.querySelectorAll('#cfgStart button').forEach(b=>b.classList.toggle('on',b.dataset.v===cfg.start));
     document.querySelectorAll('#cfgDbg button').forEach(b=>b.classList.toggle('on',+b.dataset.v===cfg.dbg));
     const P=S.photo; $('cfgCard').textContent=P?cardLabel(P.card):'—';
-    $('cfgInfo').textContent=P?(P.det?'Carta detectada na foto ('+P.det.inl+' de 7 naipes).':'Carta NÃO detectada nesta foto.'):'Nenhuma foto tirada.';
+    $('cfgInfo').innerHTML=P?('Último input: '+(S.lastSeq||'nenhum swipe lido')+'<br>'+(P.det?'Carta detectada na foto ('+P.det.inl+' de 7 naipes).':'Carta NÃO detectada nesta foto.')+'<br>Troca: '+(P.B?'pronta':(P.card?(S.err||'não montada'):'aguardando input'))):'Nenhuma foto tirada.';
   }
   const open=()=>{ refresh(); sh.classList.add('show'); };
   const f=$('fbtn');
