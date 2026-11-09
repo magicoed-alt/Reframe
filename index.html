@@ -59,6 +59,7 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:poin
 #natUI .r1{justify-content:center}
 #natPill{width:calc(211*var(--u));height:calc(110*var(--u));border-radius:999px;background:#1c1c1e;color:#ffd60a;font:600 calc(46*var(--u))/1 -apple-system,'SF Pro Text',Inter,sans-serif;letter-spacing:.04em;display:flex;align-items:center;justify-content:center;border:0;box-shadow:inset 0 0 0 calc(2*var(--u)) rgba(255,255,255,.1)}
 #cam.nat .nocam{background:#000}
+#shotImg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;pointer-events:none}
 #cam.nat .nocam>*,#cam.nat .grid,#cam.nat .expand,#cam.nat .focus{display:none!important}
 .bottom{position:absolute;left:0;top:calc(1995*var(--u));bottom:0;width:100%;display:flex;flex-direction:column;justify-content:space-evenly}
 .row{position:relative;left:0;right:0;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 calc(94*var(--u))}
@@ -146,6 +147,7 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:poin
     <div class="focus" id="focus"><i></i></div>
     <div class="expand"><svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 10v12M10 10h12M10 10l12 12M38 38V26M38 38H26M38 38 26 26"/></svg></div>
     <div class="nocam" id="nocam"><div id="nocamMsg">Permita o acesso à câmera para continuar.</div><label>Usar foto de teste<input type="file" accept="image/*" id="file" hidden></label></div>
+    <img id="shotImg" alt="" draggable="false">
     <div class="shutterfx" id="shfx"></div>
   </div>
 
@@ -595,6 +597,7 @@ function newPhoto(cv,live,imported){
   const tc=document.createElement('canvas'); tc.width=tc.height=160; const tx=tc.getContext('2d'); const m=Math.min(W,H);
   tx.drawImage(cv,(W-m)/2,(H-m)/2,m,m,0,0,160,160);
   const ti=$('thumbImg'); ti.src=tc.toDataURL('image/jpeg',.85); ti.style.display='block';
+  if(cfg.cam==='native'){ const ts=Math.min(1,1200/W), vc=document.createElement('canvas'); vc.width=Math.round(W*ts); vc.height=Math.round(H*ts); vc.getContext('2d').drawImage(cv,0,0,vc.width,vc.height); const si=$('shotImg'); si.src=vc.toDataURL('image/jpeg',.8); si.style.display='block'; }
   const th=$('thumb'); th.classList.remove('pop'); void th.offsetWidth; th.classList.add('pop');
   // detecta a carta na foto (mais precisão que ao vivo); se falhar, usa a última detecção ao vivo
   setTimeout(()=>{
@@ -759,7 +762,7 @@ addEventListener('resize',()=>{ if(S.viewOpen&&S.photo){ layout(S.photo); clampV
   document.querySelectorAll('#cfgCam button').forEach(b=>b.addEventListener('click',()=>{ cfg.cam=b.dataset.v; saveCfg(); refresh(); S.liveDet=null; startCam(); }));
   document.querySelectorAll('#cfgDbg button').forEach(b=>b.addEventListener('click',()=>{ cfg.dbg=+b.dataset.v; refresh(); drawDbg(null,LW,LH); }));
   $('cfgClose').addEventListener('click',()=>sh.classList.remove('show'));
-  $('cfgReset').addEventListener('click',()=>{ if(S.photo) clearTimeout(S.photo.timer); S.photo=null; S.pend=null; S.seq=[]; hits=0; $('thumbImg').style.display='none'; sh.classList.remove('show'); });
+  $('cfgReset').addEventListener('click',()=>{ if(S.photo) clearTimeout(S.photo.timer); $('shotImg').style.display='none'; S.photo=null; S.pend=null; S.seq=[]; hits=0; $('thumbImg').style.display='none'; sh.classList.remove('show'); });
   sh.addEventListener('pointerdown',e=>{ if(e.target===sh) sh.classList.remove('show'); });
 })();
 
