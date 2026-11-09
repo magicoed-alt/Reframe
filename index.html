@@ -51,6 +51,15 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:poin
 .nocam{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:24px;background:#161616;font-size:15px;color:#bbb}
 .nocam label{padding:10px 18px;border-radius:999px;background:#2c2c2e;color:#fff;font-weight:600}
 .shutterfx{position:absolute;inset:0;background:#000;opacity:0;pointer-events:none}
+#natUI{display:none;position:absolute;inset:0;pointer-events:none;z-index:5}
+#cam.nat #natUI{display:block}
+#natUI .nt{position:absolute;left:0;right:0;top:0;height:calc(411*var(--u));background:#000;display:flex;justify-content:center;align-items:center;padding-top:calc(110*var(--u))}
+#natUI .nt svg{width:calc(64*var(--u));height:calc(64*var(--u))}
+#natUI .nb{position:absolute;left:0;right:0;top:calc(1995*var(--u));bottom:0;background:#000;display:flex;flex-direction:column;justify-content:space-evenly;pointer-events:auto}
+#natUI .r1{justify-content:center}
+#natPill{width:calc(211*var(--u));height:calc(110*var(--u));border-radius:999px;background:#1c1c1e;color:#ffd60a;font:600 calc(46*var(--u))/1 -apple-system,'SF Pro Text',Inter,sans-serif;letter-spacing:.04em;display:flex;align-items:center;justify-content:center;border:0;box-shadow:inset 0 0 0 calc(2*var(--u)) rgba(255,255,255,.1)}
+#cam.nat .nocam{background:#000}
+#cam.nat .nocam>*,#cam.nat .grid,#cam.nat .expand,#cam.nat .focus{display:none!important}
 .bottom{position:absolute;left:0;top:calc(1995*var(--u));bottom:0;width:100%;display:flex;flex-direction:column;justify-content:space-evenly}
 .row{position:relative;left:0;right:0;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 calc(94*var(--u))}
 .r1{height:calc(220*var(--u))}
@@ -150,6 +159,17 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:poin
       <button class="thumb" id="thumb" aria-label="Última foto"><img id="thumbImg" alt=""></button>
       <div class="modes"><span>VÍDEO</span><span class="sel">FOTO</span><span>RETRATO</span></div>
       <button class="circ" id="flip" aria-label="Virar câmera"><svg viewBox="0 0 64 64" width="44" height="44" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 28a22 22 0 0 1 38-12l6 6M54 36a22 22 0 0 1-38 12l-6-6"/><path d="M54 8v14H40M10 56V42h14"/></svg></button>
+    </div>
+  </div>
+  <div id="natUI">
+    <div class="nt"><svg viewBox="0 0 100 100"><path d="M54 6 20 58h24l-8 36 40-54H52z" fill="#fff"/><path d="M14 90 88 12" stroke="#000" stroke-width="16" stroke-linecap="round"/><path d="M14 90 88 12" stroke="#fff" stroke-width="7" stroke-linecap="round"/></svg></div>
+    <div class="nb">
+      <div class="row r1"><button class="shutter" id="natShutter" aria-label="Foto"><i></i></button></div>
+      <div class="row r2">
+        <button class="circ" id="natX" aria-label="Fechar"><svg viewBox="0 0 64 64" width="44" height="44" fill="none" stroke="#fff" stroke-width="4.2" stroke-linecap="round"><path d="M16 16l32 32M48 16 16 48"/></svg></button>
+        <button id="natPill">FOTO</button>
+        <button class="circ" id="natFlip" aria-label="Virar câmera"><svg viewBox="0 0 64 64" width="44" height="44" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 28a22 22 0 0 1 38-12l6 6M54 36a22 22 0 0 1-38 12l-6-6"/><path d="M54 8v14H40M10 56V42h14"/></svg></button>
+      </div>
     </div>
   </div>
   <div id="flashw"></div>
@@ -484,7 +504,9 @@ function pulseDot(n,ms){ // feedback discreto do input secreto
 
 /* ---------- câmera ---------- */
 function setMirror(){ const m=(S.facing==='user')&&!S.demoOn; vid.classList.toggle('mir',m); $('dbg').classList.toggle('mir',m); }
+function applyCam(){ $('cam').classList.toggle('nat',cfg.cam==='native'&&!S.demoOn); }
 async function startCam(){
+  applyCam();
   if(S.stream){ S.stream.getTracks().forEach(t=>t.stop()); S.stream=null; }
   if(S.demoOn) return;
   if(cfg.cam==='native'){ $('nocamMsg').textContent='Toque no botão do obturador para abrir a câmera do iPhone.'; $('nocam').style.display='flex'; vid.style.display='none'; return; }
@@ -586,6 +608,9 @@ function newPhoto(cv,live,imported){
   },30);
 }
 $('shutter').addEventListener('click',shutter);
+$('natShutter').addEventListener('click',shutter);
+$('natX').addEventListener('click',()=>{ if(S.photo) openViewer(); });
+$('natFlip').addEventListener('click',()=>$('flip').click());
 
 async function buildMasked(P){
   if(!P.card||!P.det) return;
@@ -723,9 +748,8 @@ addEventListener('resize',()=>{ if(S.viewOpen&&S.photo){ layout(S.photo); clampV
     $('cfgInfo').innerHTML=P?('Último input: '+(S.lastSeq||'nenhum swipe lido')+'<br>'+(P.det?'Carta detectada na foto ('+P.det.inl+' de 7 naipes).':'Carta NÃO detectada nesta foto.')+'<br>Troca: '+(P.B?'pronta':(P.card?(S.err||'não montada'):'aguardando input'))):'Nenhuma foto tirada.';
   }
   const open=()=>{ refresh(); sh.classList.add('show'); };
-  const f=$('fbtn');
-  f.addEventListener('pointerdown',()=>{ tm=setTimeout(open,700); });
-  ['pointerup','pointerleave','pointercancel'].forEach(ev=>f.addEventListener(ev,()=>clearTimeout(tm)));
+  [$('fbtn'),$('natPill')].forEach(f=>{ f.addEventListener('pointerdown',()=>{ tm=setTimeout(open,700); });
+  ['pointerup','pointerleave','pointercancel'].forEach(ev=>f.addEventListener(ev,()=>clearTimeout(tm))); });
   $('cfgDelay').addEventListener('input',e=>{ cfg.delay=+e.target.value; $('cfgDelayV').textContent=cfg.delay; saveCfg(); });
   document.querySelectorAll('#cfgStart button').forEach(b=>b.addEventListener('click',()=>{ cfg.start=b.dataset.v; saveCfg(); refresh(); }));
   document.querySelectorAll('#cfgTheme button').forEach(b=>b.addEventListener('click',()=>{ cfg.theme=b.dataset.v; saveCfg(); refresh(); }));
