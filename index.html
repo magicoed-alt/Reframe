@@ -51,10 +51,10 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:poin
 .nocam{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:24px;background:#161616;font-size:15px;color:#bbb}
 .nocam label{padding:10px 18px;border-radius:999px;background:#2c2c2e;color:#fff;font-weight:600}
 .shutterfx{position:absolute;inset:0;background:#000;opacity:0;pointer-events:none}
-.bottom{position:absolute;left:0;top:calc(1995*var(--u));width:100%;height:calc(581*var(--u))}
-.row{position:absolute;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:0 calc(94*var(--u))}
-.r1{top:calc(45*var(--u));height:calc(220*var(--u))}
-.r2{top:calc(354*var(--u));height:calc(132*var(--u))}
+.bottom{position:absolute;left:0;top:calc(1995*var(--u));bottom:0;width:100%;display:flex;flex-direction:column;justify-content:space-evenly}
+.row{position:relative;left:0;right:0;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 calc(94*var(--u))}
+.r1{height:calc(220*var(--u))}
+.r2{height:calc(132*var(--u))}
 .circ{width:calc(132*var(--u));height:calc(132*var(--u));border-radius:50%;background:rgba(44,44,46,.9);display:flex;align-items:center;justify-content:center;flex:none}
 .circ svg{width:calc(56*var(--u));height:calc(56*var(--u))}
 .circ.ring{background:rgba(40,40,42,.85);box-shadow:inset 0 0 0 calc(4*var(--u)) var(--y)}
@@ -116,6 +116,8 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:poin
 </style>
 </head>
 <body>
+<input type="file" id="nativeIn" accept="image/*" capture="environment" style="display:none"><input type="file" id="pickIn" accept="image/*" style="display:none">
+<input type="file" id="nativeIn" accept="image/*" capture="environment" style="display:none"><input type="file" id="pickIn" accept="image/*" style="display:none">
 <div id="cam">
   <div class="top">
     <div class="tools">
@@ -163,10 +165,10 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:poin
     <button class="g c" id="phMore" aria-label="Mais" style="left:calc(1009*var(--u));top:calc(161*var(--u));width:calc(124*var(--u));height:calc(124*var(--u))"><svg viewBox="0 0 24 24" style="fill:var(--ink)"><circle cx="5.500" cy="12" r="1.500"/><circle cx="12" cy="12" r="1.500"/><circle cx="18.500" cy="12" r="1.500"/></svg></button>
     <div class="g p chip" style="left:calc(44*var(--u));top:calc(353*var(--u));width:calc(114*var(--u))"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="9" stroke-dasharray="0.1 3.200"/><path d="M4 4l16 16"/></svg><svg viewBox="0 0 24 24" style="width:calc(32*var(--u));height:calc(32*var(--u))"><path d="m6 9 6 6 6-6"/></svg></div>
     <div class="g p chip" style="left:calc(1051*var(--u));top:calc(353*var(--u));width:calc(92*var(--u))"><svg viewBox="0 0 24 24" style="fill:var(--ink)"><path d="M12 3 4 7.500v9L12 21l8-4.500v-9z"/></svg><svg viewBox="0 0 24 24" style="width:calc(32*var(--u));height:calc(32*var(--u))"><path d="m9 6 6 6-6 6"/></svg></div>
-    <div id="phStrip" style="left:calc(553*var(--u));top:calc(2230*var(--u));width:calc(82*var(--u));height:calc(82*var(--u))"><canvas id="phStripCv" width="164" height="164"></canvas></div>
-    <div class="g c" style="left:calc(76*var(--u));top:calc(2365*var(--u));width:calc(134*var(--u));height:calc(134*var(--u))"><svg viewBox="0 0 24 24"><path d="M12 15V3.500M8.500 7 12 3.500 15.500 7M7 10.500H5.500a1.500 1.500 0 0 0-1.500 1.500v7a1.500 1.500 0 0 0 1.500 1.500h13a1.500 1.500 0 0 0 1.500-1.500v-7a1.500 1.500 0 0 0-1.500-1.500H17"/></svg></div>
-    <div class="g p" style="left:calc(369*var(--u));top:calc(2365*var(--u));width:calc(450*var(--u));height:calc(134*var(--u));justify-content:space-around"><svg viewBox="0 0 24 24"><path d="M12 20.500s-8-4.800-8-10.700A4.600 4.600 0 0 1 12 7a4.600 4.600 0 0 1 8 2.800c0 5.900-8 10.700-8 10.700z"/></svg><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.600v.1"/></svg><svg viewBox="0 0 24 24"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg></div>
-    <div class="g c" style="left:calc(977*var(--u));top:calc(2365*var(--u));width:calc(134*var(--u));height:calc(134*var(--u))"><svg viewBox="0 0 24 24"><path d="M4.500 6.500h15M9.500 6.500V4h5v2.500M6.500 6.500l.8 13a1.500 1.500 0 0 0 1.500 1.400h6.400a1.500 1.500 0 0 0 1.500-1.400l.8-13M10 10.500v6M14 10.500v6"/></svg></div>
+    <div id="phStrip" style="left:calc(553*var(--u));bottom:calc(264*var(--u));width:calc(82*var(--u));height:calc(82*var(--u))"><canvas id="phStripCv" width="164" height="164"></canvas></div>
+    <div class="g c" style="left:calc(76*var(--u));bottom:calc(77*var(--u));width:calc(134*var(--u));height:calc(134*var(--u))"><svg viewBox="0 0 24 24"><path d="M12 15V3.500M8.500 7 12 3.500 15.500 7M7 10.500H5.500a1.500 1.500 0 0 0-1.500 1.500v7a1.500 1.500 0 0 0 1.500 1.500h13a1.500 1.500 0 0 0 1.500-1.500v-7a1.500 1.500 0 0 0-1.500-1.500H17"/></svg></div>
+    <div class="g p" style="left:calc(369*var(--u));bottom:calc(77*var(--u));width:calc(450*var(--u));height:calc(134*var(--u));justify-content:space-around"><svg viewBox="0 0 24 24"><path d="M12 20.500s-8-4.800-8-10.700A4.600 4.600 0 0 1 12 7a4.600 4.600 0 0 1 8 2.800c0 5.900-8 10.700-8 10.700z"/></svg><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.600v.1"/></svg><svg viewBox="0 0 24 24"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg></div>
+    <div class="g c" style="left:calc(977*var(--u));bottom:calc(77*var(--u));width:calc(134*var(--u));height:calc(134*var(--u))"><svg viewBox="0 0 24 24"><path d="M4.500 6.500h15M9.500 6.500V4h5v2.500M6.500 6.500l.8 13a1.500 1.500 0 0 0 1.500 1.400h6.400a1.500 1.500 0 0 0 1.500-1.400l.8-13M10 10.500v6M14 10.500v6"/></svg></div>
   </div>
 </div>
 
@@ -175,6 +177,7 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:poin
   <div class="r"><span>Voltar ao 7 de paus após <b id="cfgDelayV">6</b> s</span><input type="range" id="cfgDelay" min="2" max="30" step="1"></div>
   <div class="r"><span>Contar a partir de</span><div class="seg" id="cfgStart"><button data-v="zoom">Zoom na mão</button><button data-v="open">Abrir foto</button></div></div>
   <div class="r"><span>Tema do visualizador</span><div class="seg" id="cfgTheme"><button data-v="auto">Auto</button><button data-v="light">Claro</button><button data-v="dark">Escuro</button></div></div>
+  <div class="r"><span>Câmera</span><div class="seg" id="cfgCam"><button data-v="native">Nativa</button><button data-v="live">Ao vivo</button></div></div>
   <div class="r"><span>Mostrar caixa de detecção</span><div class="seg" id="cfgDbg"><button data-v="0">Não</button><button data-v="1">Sim</button></div></div>
   <div class="r"><span>Carta armada</span><b id="cfgCard">—</b></div>
   <div class="sub" id="cfgInfo"></div>
@@ -462,9 +465,9 @@ const NAMES={a:'Ás',x:'10',j:'Valete',q:'Dama',k:'Rei'};
 const SUITN={s:'♠',h:'♥',c:'♣',d:'♦'};
 
 /* ---------- configuração ---------- */
-const cfg={delay:6,start:'zoom',theme:'auto',dbg:qs.get('debug')==='1'?1:0};
-try{const j=JSON.parse(localStorage.getItem('fotoCfg')||'{}'); if(j.delay)cfg.delay=j.delay; if(j.start)cfg.start=j.start; if(j.theme)cfg.theme=j.theme;}catch(e){}
-function saveCfg(){try{localStorage.setItem('fotoCfg',JSON.stringify({delay:cfg.delay,start:cfg.start,theme:cfg.theme}));}catch(e){}}
+const cfg={delay:6,start:'zoom',theme:'auto',cam:'native',dbg:qs.get('debug')==='1'?1:0};
+try{const j=JSON.parse(localStorage.getItem('fotoCfg')||'{}'); if(j.delay)cfg.delay=j.delay; if(j.start)cfg.start=j.start; if(j.theme)cfg.theme=j.theme; if(j.cam)cfg.cam=j.cam;}catch(e){}
+function saveCfg(){try{localStorage.setItem('fotoCfg',JSON.stringify({delay:cfg.delay,start:cfg.start,theme:cfg.theme,cam:cfg.cam}));}catch(e){}}
 if(qs.get('delay')) cfg.delay=+qs.get('delay')||cfg.delay;
 
 /* ---------- estado ---------- */
@@ -484,6 +487,7 @@ function setMirror(){ const m=(S.facing==='user')&&!S.demoOn; vid.classList.togg
 async function startCam(){
   if(S.stream){ S.stream.getTracks().forEach(t=>t.stop()); S.stream=null; }
   if(S.demoOn) return;
+  if(cfg.cam==='native'){ $('nocamMsg').textContent='Toque no botão do obturador para abrir a câmera do iPhone.'; $('nocam').style.display='flex'; vid.style.display='none'; return; }
   try{
     if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia) throw new Error('sem getUserMedia');
     S.stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:S.facing},width:{ideal:4032},height:{ideal:3024}}});
@@ -501,7 +505,7 @@ function useDemo(url){
 }
 $('file').addEventListener('change',e=>{ const f=e.target.files[0]; if(f) useDemo(URL.createObjectURL(f)); });
 if(qs.get('demo')) useDemo(qs.get('demo'));
-$('flip').addEventListener('click',()=>{ S.facing=S.facing==='user'?'environment':'user'; S.liveDet=null; startCam(); });
+$('flip').addEventListener('click',()=>{ S.facing=S.facing==='user'?'environment':'user'; S.liveDet=null; if(cfg.cam!=='native') startCam(); });
 
 function srcEl(){ return S.demoOn?demoImg:vid; }
 function srcSize(){ const e=srcEl(); return S.demoOn?[e.naturalWidth,e.naturalHeight]:[e.videoWidth,e.videoHeight]; }
@@ -523,7 +527,7 @@ function drawDbg(det,w,h){
   [[0,0],[MODEL.W,0],[MODEL.W,MODEL.H],[0,MODEL.H],[0,0]].forEach(([a,b],i)=>{const T=det.T,X=T[0]*a+T[1]*b+T[2],Y=T[3]*a+T[4]*b+T[5]; i?x.lineTo(X,Y):x.moveTo(X,Y);}); x.stroke();
 }
 function liveTick(){
-  if(S.photo||S.viewOpen){ return; }
+  if(cfg.cam==='native'||S.photo||S.viewOpen){ return; }
   const f=grabSmall(LW,LH); if(!f) return;
   const det=detectCard(f), now=performance.now();
   if(det){ hits=Math.min(3,hits+1); lastHit=now; S.liveDet={det,w:LW,h:LH,t:now}; } else hits=Math.max(0,hits-1);
@@ -541,13 +545,26 @@ function cardImage(code){
     im.onerror=()=>rej(new Error('carta '+code)); im.src=(window.CARDS&&window.CARDS[code])||('cartas/'+code+'.png'); });
 }
 function shutter(){
+  if(cfg.cam==='native'&&!S.demoOn){ $('nativeIn').setAttribute('capture',S.facing==='user'?'user':'environment'); $('nativeIn').click(); return; }
   const [sw,sh]=srcSize(); if(!sw||!sh) return;
   const [sx,sy,cw,ch]=cropRect(sw,sh), sc=Math.min(1,2560/Math.max(cw,ch));
   const W=Math.round(cw*sc),H=Math.round(ch*sc);
   const cv=document.createElement('canvas'); cv.width=W; cv.height=H;
   cv.getContext('2d').drawImage(srcEl(),sx,sy,cw,ch,0,0,W,H);
-  const live=S.liveDet;
+  newPhoto(cv,S.liveDet);
+}
+async function importFile(f){
+  if(!f) return;
+  let bm; try{ bm=await createImageBitmap(f,{imageOrientation:'from-image'}); }catch(e){ try{ bm=await createImageBitmap(f); }catch(e2){ return; } }
+  const sc=Math.min(1,2560/Math.max(bm.width,bm.height)), W=Math.round(bm.width*sc),H=Math.round(bm.height*sc);
+  const cv=document.createElement('canvas'); cv.width=W; cv.height=H; cv.getContext('2d').drawImage(bm,0,0,W,H);
+  newPhoto(cv,null,true);
+}
+['nativeIn','pickIn'].forEach(id=>$(id).addEventListener('change',e=>{ const f=e.target.files[0]; e.target.value=''; importFile(f); }));
+function newPhoto(cv,live,imported){
+  const W=cv.width,H=cv.height;
   const P={cv,W,H,time:new Date(),card:null,B:null,det:null,done:false,timerStarted:false};
+  if(S.pend){ P.card=S.pend; S.pend=null; cardImage(P.card); }
   S.photo=P; S.seq=[]; setDot(false); hits=0; drawDbg(null,LW,LH);
   // animação do obturador
   const fx=$('shfx'); fx.style.transition='none'; fx.style.opacity='1'; requestAnimationFrame(()=>{fx.style.transition='opacity .22s';fx.style.opacity='0';});
@@ -565,6 +582,7 @@ function shutter(){
     if(!det&&live&&performance.now()-live.t<2500){ det=live.det; k=W/live.w; }
     if(det){ const T=det.T.map(v=>v*k); P.det=Object.assign({},det,{T}); }
     if(P.card) buildMasked(P);
+    if(imported) setDot(!!P.det);
   },30);
 }
 $('shutter').addEventListener('click',shutter);
@@ -589,12 +607,12 @@ function decode(seq){
 }
 function cardLabel(c){ if(!c) return '—'; if(c==='jj') return 'Coringa'; return (NAMES[c[0]]||c[0].toUpperCase())+' '+SUITN[c[1]]; }
 function onSwipe(dir){
-  if(!S.photo) return;
   const now=performance.now(); if(now-S.seqT>7000) S.seq=[]; S.seqT=now;
   S.seq.push(dir); S.lastSeq=S.seq.join(' ');
   if(S.seq.length<3){ pulseDot(1,70); return; }
   const code=decode(S.seq); S.lastSeq=S.seq.join(' ')+' → '+(code||'inválido'); S.seq=[];
   if(!code){ return; }
+  if(!S.photo){ S.pend=code; pulseDot(2,90); return; }
   const P=S.photo; P.card=code; P.B=null; P.done=false; P.timerStarted=false; clearTimeout(P.timer);
   pulseDot(2,90);
   cardImage(code).then(()=>{ if(P.det) buildMasked(P); });
@@ -644,7 +662,7 @@ function startTimer(P){
   if(!P||P.timerStarted||!P.B||P.done) return; P.timerStarted=true;
   P.timer=setTimeout(()=>{ P.done=true; if(S.viewOpen&&S.photo===P){ cvB.style.transition='opacity .9s ease'; cvB.style.opacity='0'; } },cfg.delay*1000);
 }
-$('thumb').addEventListener('click',openViewer);
+$('thumb').addEventListener('click',()=>{ if(S.photo) openViewer(); else $('pickIn').click(); });
 $('phBack').addEventListener('click',closeViewer);
 $('phMore').addEventListener('click',()=>{ // gatilho secreto: volta ao 7 de paus na hora
   const P=S.photo; if(!P||!P.B||P.done) return; clearTimeout(P.timer); P.done=true; P.timerStarted=true;
@@ -700,6 +718,7 @@ addEventListener('resize',()=>{ if(S.viewOpen&&S.photo){ layout(S.photo); clampV
     document.querySelectorAll('#cfgStart button').forEach(b=>b.classList.toggle('on',b.dataset.v===cfg.start));
     document.querySelectorAll('#cfgTheme button').forEach(b=>b.classList.toggle('on',b.dataset.v===cfg.theme));
     document.querySelectorAll('#cfgDbg button').forEach(b=>b.classList.toggle('on',+b.dataset.v===cfg.dbg));
+    document.querySelectorAll('#cfgCam button').forEach(b=>b.classList.toggle('on',b.dataset.v===cfg.cam));
     const P=S.photo; $('cfgCard').textContent=P?cardLabel(P.card):'—';
     $('cfgInfo').innerHTML=P?('Último input: '+(S.lastSeq||'nenhum swipe lido')+'<br>'+(P.det?'Carta detectada na foto ('+P.det.inl+' de 7 naipes).':'Carta NÃO detectada nesta foto.')+'<br>Troca: '+(P.B?'pronta':(P.card?(S.err||'não montada'):'aguardando input'))):'Nenhuma foto tirada.';
   }
@@ -710,9 +729,10 @@ addEventListener('resize',()=>{ if(S.viewOpen&&S.photo){ layout(S.photo); clampV
   $('cfgDelay').addEventListener('input',e=>{ cfg.delay=+e.target.value; $('cfgDelayV').textContent=cfg.delay; saveCfg(); });
   document.querySelectorAll('#cfgStart button').forEach(b=>b.addEventListener('click',()=>{ cfg.start=b.dataset.v; saveCfg(); refresh(); }));
   document.querySelectorAll('#cfgTheme button').forEach(b=>b.addEventListener('click',()=>{ cfg.theme=b.dataset.v; saveCfg(); refresh(); }));
+  document.querySelectorAll('#cfgCam button').forEach(b=>b.addEventListener('click',()=>{ cfg.cam=b.dataset.v; saveCfg(); refresh(); S.liveDet=null; startCam(); }));
   document.querySelectorAll('#cfgDbg button').forEach(b=>b.addEventListener('click',()=>{ cfg.dbg=+b.dataset.v; refresh(); drawDbg(null,LW,LH); }));
   $('cfgClose').addEventListener('click',()=>sh.classList.remove('show'));
-  $('cfgReset').addEventListener('click',()=>{ if(S.photo) clearTimeout(S.photo.timer); S.photo=null; S.seq=[]; hits=0; $('thumbImg').style.display='none'; sh.classList.remove('show'); });
+  $('cfgReset').addEventListener('click',()=>{ if(S.photo) clearTimeout(S.photo.timer); S.photo=null; S.pend=null; S.seq=[]; hits=0; $('thumbImg').style.display='none'; sh.classList.remove('show'); });
   sh.addEventListener('pointerdown',e=>{ if(e.target===sh) sh.classList.remove('show'); });
 })();
 
