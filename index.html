@@ -85,7 +85,7 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:poin
 #flashw{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
 
 /* ===== visualizador de fotos (estilo app Fotos do iOS) ===== */
-#ph{--bg:#fff;--glass:rgba(255,255,255,.78);--ink:#000;--edge:rgba(0,0,0,.07);--shadow:0 calc(8*var(--u)) calc(30*var(--u)) rgba(0,0,0,.08);
+#ph{--bg:#fff;--glass:rgba(255,255,255,.78);--ink:#000;--edge:rgba(0,0,0,.16);--shadow:0 calc(8*var(--u)) calc(30*var(--u)) rgba(0,0,0,.08);
   position:fixed;inset:0;background:#000;display:none;touch-action:none;overflow:hidden;z-index:20}
 #ph.dk{--bg:#000;--glass:rgba(58,58,60,.62);--ink:#fff;--edge:rgba(255,255,255,.12);--shadow:none}
 #ph.show{display:block}
@@ -185,10 +185,11 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:poin
     <button class="g c" id="phMore" aria-label="Mais" style="left:calc(1009*var(--u));top:calc(161*var(--u));width:calc(124*var(--u));height:calc(124*var(--u))"><svg viewBox="0 0 24 24" style="fill:var(--ink)"><circle cx="5.500" cy="12" r="1.500"/><circle cx="12" cy="12" r="1.500"/><circle cx="18.500" cy="12" r="1.500"/></svg></button>
     <div class="g p chip" style="left:calc(44*var(--u));top:calc(353*var(--u));width:calc(114*var(--u))"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="9" stroke-dasharray="0.1 3.200"/><path d="M4 4l16 16"/></svg><svg viewBox="0 0 24 24" style="width:calc(32*var(--u));height:calc(32*var(--u))"><path d="m6 9 6 6 6-6"/></svg></div>
     <div class="g p chip" style="left:calc(1051*var(--u));top:calc(353*var(--u));width:calc(92*var(--u))"><svg viewBox="0 0 24 24" style="fill:var(--ink)"><path d="M12 3 4 7.500v9L12 21l8-4.500v-9z"/></svg><svg viewBox="0 0 24 24" style="width:calc(32*var(--u));height:calc(32*var(--u))"><path d="m9 6 6 6-6 6"/></svg></div>
-    <div id="phStrip" style="left:calc(553*var(--u));bottom:calc(264*var(--u));width:calc(82*var(--u));height:calc(82*var(--u))"><canvas id="phStripCv" width="164" height="164"></canvas></div>
-    <div class="g c" style="left:calc(76*var(--u));bottom:calc(77*var(--u));width:calc(134*var(--u));height:calc(134*var(--u))"><svg viewBox="0 0 24 24"><path d="M12 15V3.500M8.500 7 12 3.500 15.500 7M7 10.500H5.500a1.500 1.500 0 0 0-1.500 1.500v7a1.500 1.500 0 0 0 1.500 1.500h13a1.500 1.500 0 0 0 1.500-1.500v-7a1.500 1.500 0 0 0-1.500-1.500H17"/></svg></div>
-    <div class="g p" style="left:calc(369*var(--u));bottom:calc(77*var(--u));width:calc(450*var(--u));height:calc(134*var(--u));justify-content:space-around"><svg viewBox="0 0 24 24"><path d="M12 20.500s-8-4.800-8-10.700A4.600 4.600 0 0 1 12 7a4.600 4.600 0 0 1 8 2.800c0 5.900-8 10.700-8 10.700z"/></svg><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.600v.1"/></svg><svg viewBox="0 0 24 24"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg></div>
-    <div class="g c" style="left:calc(977*var(--u));bottom:calc(77*var(--u));width:calc(134*var(--u));height:calc(134*var(--u))"><svg viewBox="0 0 24 24"><path d="M4.500 6.500h15M9.500 6.500V4h5v2.500M6.500 6.500l.8 13a1.500 1.500 0 0 0 1.500 1.400h6.400a1.500 1.500 0 0 0 1.500-1.400l.8-13M10 10.500v6M14 10.500v6"/></svg></div>
+    <div id="phStripL" style="left:calc(80*var(--u));bottom:calc(214*var(--u));width:calc(440*var(--u));height:calc(82*var(--u));position:absolute;display:flex;gap:calc(9*var(--u));overflow:hidden;border-radius:calc(6*var(--u))"></div>
+    <div id="phStrip" style="left:calc(553*var(--u));bottom:calc(214*var(--u));width:calc(82*var(--u));height:calc(82*var(--u))"><canvas id="phStripCv" width="164" height="164"></canvas></div>
+    <div class="g c" style="left:calc(76*var(--u));bottom:calc(28*var(--u));width:calc(134*var(--u));height:calc(134*var(--u))"><svg viewBox="0 0 24 24"><path d="M12 15V3.500M8.500 7 12 3.500 15.500 7M7 10.500H5.500a1.500 1.500 0 0 0-1.500 1.500v7a1.500 1.500 0 0 0 1.500 1.500h13a1.500 1.500 0 0 0 1.500-1.500v-7a1.500 1.500 0 0 0-1.500-1.500H17"/></svg></div>
+    <div class="g p" style="left:calc(369*var(--u));bottom:calc(28*var(--u));width:calc(450*var(--u));height:calc(134*var(--u));justify-content:space-around"><svg viewBox="0 0 24 24"><path d="M12 20.500s-8-4.800-8-10.700A4.600 4.600 0 0 1 12 7a4.600 4.600 0 0 1 8 2.800c0 5.900-8 10.700-8 10.700z"/></svg><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.600v.1"/></svg><svg viewBox="0 0 24 24"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg></div>
+    <div class="g c" style="left:calc(977*var(--u));bottom:calc(28*var(--u));width:calc(134*var(--u));height:calc(134*var(--u))"><svg viewBox="0 0 24 24"><path d="M4.500 6.500h15M9.500 6.500V4h5v2.500M6.500 6.500l.8 13a1.500 1.500 0 0 0 1.500 1.400h6.400a1.500 1.500 0 0 0 1.500-1.400l.8-13M10 10.500v6M14 10.500v6"/></svg></div>
   </div>
 </div>
 
@@ -662,10 +663,10 @@ const stage=$('stage'), cvA=$('cvA'), cvB=$('cvB'), ph=$('ph');
 let fitW=0,fitH=0, V={s:1,tx:0,ty:0};
 function layout(P){
   const vw=innerWidth,vh=innerHeight, f=Math.min(vw/P.W,vh/P.H); fitW=P.W*f; fitH=P.H*f;
-  stage.style.width=fitW+'px'; stage.style.height=fitH+'px'; stage.style.marginLeft=(-fitW/2)+'px'; stage.style.marginTop=(-fitH/2)+'px';
+  stage.style.width=fitW+'px'; stage.style.height=fitH+'px'; stage.style.marginLeft=(-fitW/2)+'px'; const u=vw/1188, sh=Math.max(0,Math.min(1288*u-vh/2,(vh-fitH)/2+ (vh-fitH)*0)); stage.style.marginTop=(-fitH/2+sh)+'px';
 }
 function applyV(){ stage.style.transform='translate('+V.tx+'px,'+V.ty+'px) scale('+V.s+')'; ph.classList.toggle('zoomed',V.s>1.05); }
-function setTheme(on){ const dk=cfg.theme==='dark'||(cfg.theme==='auto'&&matchMedia('(prefers-color-scheme: dark)').matches); ph.classList.toggle('dk',dk); const m=$('themeColor'); if(m) m.setAttribute('content',on?(dk?'#000000':'#ffffff'):'#000000'); }
+function setTheme(on){ const dk=cfg.theme==='dark'||(cfg.theme==='auto'&&matchMedia('(prefers-color-scheme: dark)').matches); ph.classList.toggle('dk',dk); document.documentElement.style.background=on&&!(cfg.theme==='dark'||(cfg.theme==='auto'&&matchMedia('(prefers-color-scheme: dark)').matches))?'#fff':'#000'; const m=$('themeColor'); if(m) m.setAttribute('content',on?(dk?'#000000':'#ffffff'):'#000000'); }
 function clampV(){
   const vw=innerWidth,vh=innerHeight,mx=Math.max(0,(fitW*V.s-vw)/2),my=Math.max(0,(fitH*V.s-vh)/2);
   V.tx=Math.max(-mx,Math.min(mx,V.tx)); V.ty=Math.max(-my,Math.min(my,V.ty));
@@ -676,6 +677,8 @@ function openViewer(){
   S.viewOpen=true; setTheme(true); ph.classList.add('show'); ph.classList.remove('hide');
   cvA.width=P.W; cvA.height=P.H; cvA.getContext('2d').drawImage(P.cv,0,0);
   layout(P); V={s:1,tx:0,ty:0}; applyV(); $('phbg').style.opacity='1';
+  { const L=$('phStripL'); if(!L.children.length){ for(let i=0;i<7;i++){ const c=document.createElement('canvas'); c.width=110; c.height=164; c.style.cssText='width:calc(55*var(--u));height:100%;flex:none;display:block;border-radius:calc(4*var(--u))'; L.appendChild(c);} }
+    const mh=Math.min(P.H,P.W*1.5), mw=mh/1.5; [...L.children].forEach((c,i)=>c.getContext('2d').drawImage(P.cv,(P.W-mw)/2+(i-3)*mw*0.18,(P.H-mh)/2,mw,mh,0,0,110,164)); }
   { const sc=$('phStripCv'),m=Math.min(P.W,P.H); sc.getContext('2d').drawImage(P.cv,(P.W-m)/2,(P.H-m)/2,m,m,0,0,164,164); }
   const t=P.time; $('phTtl').innerHTML='Hoje<small>'+String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0')+'</small>';
   if(P.card&&!P.B&&P.det&&!P.done) buildMasked(P);
